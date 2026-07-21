@@ -14,6 +14,14 @@
    - Pattern: HashMap lookup (complement search)
    - Invariant: `map[target - nums[i]]` has been seen before index i
    - Key insight: For each number, check if its complement already exists in the map
+  
+   - for (int i = 0; i < nums.length; i++) {
+            int complement = target - nums[i];
+            if (seen.containsKey(complement)) {
+                return new int[]{seen.get(complement), i};
+            }
+            seen.put(nums[i], i);
+        }
 
 2. **Contains Duplicate** — Determine if an array contains duplicate values.
    - Pattern: HashSet membership check
@@ -41,6 +49,13 @@
 6. **Valid Palindrome** — Check if a string is a palindrome ignoring non-alphanumeric characters.
    - Pattern: Opposite-end two pointers
    - Key insight: Skip non-alphanumeric chars, compare lowercased chars at left and right
+   -  boolean isAlphaNumeric = Character.isLetterOrDigit(ch);
+   -  public boolean isAlphaNumericManual(char c) {
+       return (c >= 'A' && c <= 'Z') || 
+           (c >= 'a' && c <= 'z') || 
+           (c >= '0' && c <= '9');
+      }
+
 
 7. **Merge Sorted Array** — Merge two sorted arrays in-place.
    - Pattern: Two pointers from the END (avoid overwriting)
@@ -49,6 +64,31 @@
 8. **Move Zeroes** — Move all zeroes to the end while preserving order.
    - Pattern: Fast & Slow pointers (slow = next non-zero slot)
    - Key insight: Slow pointer tracks where next non-zero should go; fast scans ahead
+   - // Move all non-zero elements to the front
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != 0) {
+                nums[insertPos++] = nums[i];
+            }
+        }
+        
+        // Fill the remaining elements with zero
+        while (insertPos < nums.length) {
+            nums[insertPos++] = 0;
+        }
+     - fast - slow approach
+        int slow = 0;
+        
+        // Fast pointer scans ahead
+        for (int fast = 0; fast < nums.length; fast++) {
+            if (nums[fast] != 0) {
+                // Swap elements at slow and fast pointers
+                int temp = nums[slow];
+                nums[slow] = nums[fast];
+                nums[fast] = temp;
+                
+                slow++; // Move slow pointer to the next spot
+            }
+        }
 
 9. **Pair Sum in Sorted Array** — Find two numbers in a sorted array whose sum equals the target.
    - Pattern: Opposite-end two pointers
@@ -58,10 +98,71 @@
     - Pattern: Fast & Slow pointers
     - Invariant: Everything at index ≤ slow is the unique prefix
     - Key insight: Only advance slow when `nums[fast] != nums[slow]`
+    - public int removeDuplicates(int[] nums) {
+        if (nums.length == 0) return 0;
+        
+        int slow = 0; // Tracks the unique elements partition
+        
+        // Fast pointer scans ahead
+        for (int fast = 1; fast < nums.length; fast++) {
+            if (nums[fast] != nums[slow]) {
+                slow++;
+                nums[slow] = nums[fast]; // Move the unique element forward
+            }
+        }
+        return slow + 1; // Number of unique elements
+    }
 
 11. **Longest Common Prefix** — Find the common prefix among an array of strings.
     - Pattern: Vertical scanning (char by char across all strings)
     - Key insight: If any string doesn't have the char at position i → stop
+    -  // Initialize prefix with the first string
+        String prefix = strs[0];
+        
+        // Compare prefix with every other string in the array
+        for (int i = 1; i < strs.length; i++) {
+            while (strs[i].indexOf(prefix) != 0) {
+                // Shorten the prefix by one character from the end
+                prefix = prefix.substring(0, prefix.length() - 1);
+                
+                // If prefix becomes empty, there is no common prefix
+                if (prefix.isEmpty()) return "";
+            }
+        }
+        return prefix;
+
+   - common sub string
+         public class CommonSubstring {
+          public String longestCommonSubstring(String[] strs) {
+              if (strs == null || strs.length == 0) return "";
+              
+              String first = strs[0];
+              int len = first.length();
+              
+              // Check substrings of the first word, starting from the longest possible length
+              for (int subLen = len; subLen > 0; subLen--) {
+                  for (int start = 0; start <= len - subLen; start++) {
+                      String candidate = first.substring(start, start + subLen);
+                      
+                      // Verify if this candidate exists in all other strings
+                      boolean matchAll = true;
+                      for (int i = 1; i < strs.length; i++) {
+                          if (!strs[i].contains(candidate)) {
+                              matchAll = false;
+                              break;
+                          }
+                      }
+                      
+                      // Return the first (and therefore longest) match found
+                      if (matchAll) {
+                          return candidate;
+                      }
+                  }
+              }
+              return "";
+          }
+      }
+
 
 12. **String Deletion Indices** — Return all indices whose deletion from the longer string makes it equal to the shorter string.
     - Example: `["adbsssc", "adbssc"]` → `[3, 4, 5]`
