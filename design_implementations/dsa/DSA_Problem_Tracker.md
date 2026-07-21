@@ -169,7 +169,8 @@
     - Pattern: Two pointers on both strings simultaneously
     - Invariant: `j` pointer on shorter string advances only on match; `i` on longer always advances
     - Key insight: When chars match → advance both; when mismatch → record index `i` as deletion candidate, advance only `i`
-    - import java.util.ArrayList;
+    - //Implementation
+      import java.util.ArrayList;
       import java.util.List;
       
       public class ValidDeletions {
