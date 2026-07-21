@@ -169,6 +169,43 @@
     - Pattern: Two pointers on both strings simultaneously
     - Invariant: `j` pointer on shorter string advances only on match; `i` on longer always advances
     - Key insight: When chars match → advance both; when mismatch → record index `i` as deletion candidate, advance only `i`
+    - import java.util.ArrayList;
+      import java.util.List;
+      
+      public class ValidDeletions {
+          public List<Integer> findDeletionIndices(String longer, String shorter) {
+              List<Integer> result = new ArrayList<>();
+              
+              // Edge case: lengths must differ by exactly 1 character
+              if (longer == null || shorter == null || longer.length() != shorter.length() + 1) {
+                  return result;
+              }
+      
+              int n = shorter.length();
+              int left = 0;
+              int right = n - 1;
+      
+              // Scan from left to find the first mismatch
+              while (left < n && longer.charAt(left) == shorter.charAt(left)) {
+                  left++;
+              }
+      
+              // Scan from right to find the first mismatch
+              while (right >= 0 && longer.charAt(right + 1) == shorter.charAt(right)) {
+                  right--;
+              }
+      
+              // Collect all valid indices in the boundary range
+              if (left > right) {
+                  for (int i = right + 1; i <= left; i++) {
+                      result.add(i);
+                  }
+              }
+      
+              return result;
+          }
+      }
+      
 
 ---
 
